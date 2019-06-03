@@ -1,26 +1,37 @@
 package com.example.myapplication;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-
+    private final String DEVICE_ADDRESS = "20:15:05:13:59:37"; //HC-06 MAC Address
+    private final UUID PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     String command;
     private BluetoothDevice btDevice;
     private BluetoothSocket btSocket;
     Button fwd_btn, bwd_btn, left_btn, right_btn, connect_btn;
     private OutputStream oStream;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
         fwd_btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+//                oStream = new ByteArrayOutputStream(1024);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     command = "1";
                     try {
                         oStream.write(command.getBytes());
+                        System.out.println(oStream);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -59,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "2";
+                    command = "B";
                     try {
                         oStream.write(command.getBytes());
                     } catch (IOException e) {
@@ -81,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "3";
+                    command = "L";
                     try {
                         oStream.write(command.getBytes());
                     } catch (IOException e) {
@@ -103,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "4";
+                    command = "R";
                     try {
                         oStream.write(command.getBytes());
                     } catch (IOException e) {
@@ -121,25 +134,62 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        connect_btn.setOnTouchListener(new View.OnTouchListener() {
+        connect_btn.setOnClickListener(new OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
+            public void onClick(View v) {
+                if (BTinitialize()) {
+                    BTConnect();
+                }
             }
         });
     }
 
-    public boolean BTConnect() {
-        boolean connect = true;
-        try {
-            btSocket = btDevice.createRfcommSocketToServiceRecord(UUID.randomUUID());
-            btSocket.connect();
+    public boolean BTinitialize() {
+        boolean paired = false;
+        Toast toast = null;
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            toast.makeText(getApplicationContext(), "Device Does Not Support BT", Toast.LENGTH_LONG).show();
+        }
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent enableBt = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBt, 0);
+        }
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        if (pairedDevices.isEmpty()) {
+            toast.makeText(getApplicationContext(), "Pair to device 1st", Toast.LENGTH_LONG).show();
+        } else {
+            for (BluetoothDevice pair : pairedDevices) {
+                if (pair.getAddress().equals(DEVICE_ADDRESS)) {
+                    btDevice = pair;
+                    paired = true;
+                    break;
+                }
+            }
+        }
+        return paired;
+    }
 
-            Toast toast = Toast.makeText(getApplicationContext(),"Connection Successful", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.TOP, 0,0);
+    public boolean BTConnect() {
+        boolean connection = true;
+        try {
+            btSocket = (BluetoothSocket) btDevice.createRfcommSocketToServiceRecord(PORT);
+            btSocket.connect();
+            Toast.makeText(getApplicationContext(), "Connection Successful", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
+            connection = false;
         }
+
+        if (connection) {
+            try {
+                oStream = btSocket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return connection;
     }
+
 
 }
