@@ -6,14 +6,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
@@ -25,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     String command;
     private BluetoothDevice btDevice;
     private BluetoothSocket btSocket;
-    Button fwd_btn, bwd_btn, left_btn, right_btn, connect_btn;
+    Button fwd_btn, fr_btn, fl_btn, bwd_btn, br_btn, bl_btn, left_btn, right_btn, connect_btn;
     private OutputStream oStream;
 
     @Override
@@ -39,7 +36,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fwd_btn = findViewById(R.id.fwd_btn);
+        fr_btn = findViewById(R.id.fr_btn);
+        fl_btn = findViewById(R.id.fl_btn);
+
         bwd_btn = findViewById(R.id.bwd_btn);
+        br_btn = findViewById(R.id.br_btn);
+        bl_btn = findViewById(R.id.bl_btn);
+
         left_btn = findViewById(R.id.left_btn);
         right_btn = findViewById(R.id.right_btn);
         connect_btn = findViewById(R.id.connect_btn);
@@ -47,9 +50,54 @@ public class MainActivity extends AppCompatActivity {
         fwd_btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                oStream = new ByteArrayOutputStream(1024);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "1";
+                    command = "F";
+                    try {
+                        oStream.write(command.getBytes());
+                        System.out.println(oStream);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    command = "0";
+                    try {
+                        oStream.write(command.getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
+        });
+
+        fr_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    command = "FR";
+                    try {
+                        oStream.write(command.getBytes());
+                        System.out.println(oStream);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    command = "0";
+                    try {
+                        oStream.write(command.getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
+        });
+
+        fl_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    command = "FL";
                     try {
                         oStream.write(command.getBytes());
                         System.out.println(oStream);
@@ -75,6 +123,52 @@ public class MainActivity extends AppCompatActivity {
                     command = "B";
                     try {
                         oStream.write(command.getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    command = "0";
+                    try {
+                        oStream.write(command.getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
+        });
+
+        br_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    command = "BR";
+                    try {
+                        oStream.write(command.getBytes());
+                        System.out.println(oStream);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    command = "0";
+                    try {
+                        oStream.write(command.getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
+        });
+
+        bl_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    command = "BL";
+                    try {
+                        oStream.write(command.getBytes());
+                        System.out.println(oStream);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -190,6 +284,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return connection;
     }
-
-
 }
