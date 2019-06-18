@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothSocket btSocket;
     Button fwd_btn, fr_btn, fl_btn, bwd_btn, br_btn, bl_btn, left_btn, right_btn, connect_btn;
     private OutputStream oStream;
-    private InputStream iStream;
+//    private InputStream iStream;
 
     @Override
     protected void onStart() {
@@ -283,11 +283,11 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                iStream = btSocket.getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                iStream = btSocket.getInputStream();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
         return connection;
     }
