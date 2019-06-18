@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothSocket btSocket;
     Button fwd_btn, fr_btn, fl_btn, bwd_btn, br_btn, bl_btn, left_btn, right_btn, connect_btn;
     private OutputStream oStream;
+    private InputStream iStream;
 
     @Override
     protected void onStart() {
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "F";
+                    command = "1";
                     try {
                         oStream.write(command.getBytes());
                         System.out.println(oStream);
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "FR";
+                    command = "2";
                     try {
                         oStream.write(command.getBytes());
                         System.out.println(oStream);
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "FL";
+                    command = "3";
                     try {
                         oStream.write(command.getBytes());
                         System.out.println(oStream);
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "B";
+                    command = "4";
                     try {
                         oStream.write(command.getBytes());
                     } catch (IOException e) {
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "BR";
+                    command = "5";
                     try {
                         oStream.write(command.getBytes());
                         System.out.println(oStream);
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "BL";
+                    command = "6";
                     try {
                         oStream.write(command.getBytes());
                         System.out.println(oStream);
@@ -188,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "L";
+                    command = "8";
                     try {
                         oStream.write(command.getBytes());
                     } catch (IOException e) {
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = "R";
+                    command = "7";
                     try {
                         oStream.write(command.getBytes());
                     } catch (IOException e) {
@@ -278,6 +280,11 @@ public class MainActivity extends AppCompatActivity {
         if (connection) {
             try {
                 oStream = btSocket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                iStream = btSocket.getInputStream();
             } catch (IOException e) {
                 e.printStackTrace();
             }
